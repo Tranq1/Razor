@@ -620,6 +620,15 @@ namespace Assistant.Scripts
                 "This expression will find item or mobile by type either provided by the name or the graphic ID.\n\tYou can specify the source, color and search distance (or depth)",
                 "findtype 'an eagle' 'ground' 31337 1 2");
             descriptionCommands.Add("findtype", tooltip);
+            
+            tooltip = new ToolTipDescriptions("findtypelist",
+                new[]
+                {
+                    "findtypelist ('list name') ('name') OR ('graphic') [source] [hue] [quantity] [range]"
+                }, "N/A",
+                "This expression will find item or mobile by type either provided by the name or the graphic ID and put the resulting items/mobiles found into the list with the name specified.\n\tYou can specify the source, color and search distance (or depth)",
+                "findtypelist birdlist 'an eagle' 'ground' 31337 1 2");
+            descriptionCommands.Add("findtypelist", tooltip);
 
             tooltip = new ToolTipDescriptions("find",
                 new[]
