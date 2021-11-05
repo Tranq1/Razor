@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 
 // Razor: An Ultima Online Assistant
 // Copyright (C) 2021 Razor Development Community on GitHub <https://github.com/markdwags/Razor>
@@ -36,7 +36,7 @@ namespace Assistant.Scripts
         {
             // Lists
             Interpreter.RegisterExpressionHandler("poplist", PopListExp);
-            // Interpreter.RegisterCommandHandler("poplist", PopList);
+            Interpreter.RegisterCommandHandler("poplist", PopList);
             Interpreter.RegisterCommandHandler("pushlist", PushList);
             Interpreter.RegisterCommandHandler("removelist", RemoveList);
             Interpreter.RegisterCommandHandler("createlist", CreateList);
@@ -130,21 +130,24 @@ namespace Assistant.Scripts
             if (args[1].AsString() == "front")
             {
                 if (force)
-                    while (Interpreter.PopList(args[0].AsString(), true)) { }
+                    while (Interpreter.PopList(args[0].AsString(), true, out _))
+                    { }
                 else
-                    Interpreter.PopList(args[0].AsString(), true);
+                    Interpreter.PopList(args[0].AsString(), true, out _);
             }
             else if (args[1].AsString() == "back")
             {
                 if (force)
-                    while (Interpreter.PopList(args[0].AsString(), false)) { }
+                    while (Interpreter.PopList(args[0].AsString(), false, out _))
+                    { }
                 else
-                    Interpreter.PopList(args[0].AsString(), false);
+                    Interpreter.PopList(args[0].AsString(), false, out _);
             }
             else
             {
                 if (force)
-                    while (Interpreter.PopList(args[0].AsString(), args[1])) { }
+                    while (Interpreter.PopList(args[0].AsString(), args[1]))
+                    { }
                 else
                     Interpreter.PopList(args[0].AsString(), args[1]);
             }
@@ -205,8 +208,13 @@ namespace Assistant.Scripts
                 throw new RunTimeError("Usage: atlist ('list name') (index (starts with 0))");
 
             var value = Interpreter.GetListValue(args[0].AsString(), args[1].AsInt());
+            var serial = value?.AsSerial();
 
-            return value?.AsUInt() ?? Serial.Zero;
+            // We need to check for max value because razor will look up the list name as a global alias and return max when finding none
+            if (!serial.HasValue || serial == uint.MaxValue)
+                return Serial.Zero;
+
+            return serial.Value;
         }
 
         private static bool SetTimer(string command, Variable[] args, bool quiet, bool force)

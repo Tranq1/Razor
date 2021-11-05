@@ -355,12 +355,12 @@ namespace FastColoredTextBoxNS
             RazorNumberRegex = new Regex(@"\b[+-]?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\b", RegexCompiledOption);
             RazorKeywordRegex =
                 new Regex(
-                    @"\b(if|elseif|else|endif|while|endwhile|for|endfor|break|continue|not|and|or|stop|replay|loop)\b",
+                    @"\b(if|elseif|else|endif|while|endwhile|for|foreach|endfor|break|continue|not|and|or|stop|replay|loop)\b",
                     RegexCompiledOption);
 
             RazorCommandRegex =
                 new Regex(
-                    @"\b(attack|cast|dress|undress|dressconfig|target|targettype|targetloc|targetrelloc|dress|drop|waitfortarget|wft|dclick|dclicktype|dclickvar|usetype|useobject|droprelloc|lift|lifttype|waitforgump|gumpresponse|gumpclose|menu|menuresponse|waitformenu|promptresponse|waitforprompt|hotkey|say|msg|overhead|sysmsg|wait|pause|waitforstat|setability|setlasttarget|lasttarget|setvar|skill|useskill|walk|script|useonce|organizer|organize|org|restock|scav|scavenger|potion|clearsysmsg|clearjournal|whisper|yell|guild|alliance|emote|waitforsysmsg|wfsysmsg|clearall|virtue|rename|setskill|ignore|clearignore|poplist|pushlist|removelist|createlist|clearlist|atlist|settimer|removetimer|createtimer|settimer|removetimer|getlabel|unsetvar)\b",
+                    @"\b(attack|cast|dress|undress|dressconfig|target|targettype|targetloc|targetrelloc|dress|drop|waitfortarget|wft|dclick|dclicktype|dclickvar|usetype|useobject|droprelloc|lift|lifttype|waitforgump|gumpresponse|gumpclose|menu|menuresponse|waitformenu|promptresponse|waitforprompt|hotkey|say|msg|overhead|sysmsg|wait|pause|waitforstat|setability|setlasttarget|lasttarget|setvar|skill|useskill|walk|script|useonce|organizer|organize|org|restock|scav|scavenger|potion|clearsysmsg|clearjournal|whisper|yell|guild|alliance|emote|waitforsysmsg|wfsysmsg|clearall|virtue|rename|setskill|ignore|clearignore|pushlist|removelist|createlist|clearlist|settimer|removetimer|createtimer|settimer|removetimer|getlabel|unsetvar)\b",
                     RegexCompiledOption);
 
              RazorLayerRegex =
@@ -370,7 +370,7 @@ namespace FastColoredTextBoxNS
 
             RazorExpressionRegex =
                 new Regex(
-                    @"\b(queued|position|insysmsg|insysmessage|findtype|findbuff|finddebuff|stam|maxstam|hp|maxhp|maxhits|hits|mana|maxmana|str|dex|int|poisoned|hidden|mounted|rhandempty|lhandempty|skill|count|counter|weight|dead|closest|close|rand|random|next|prev|previous|human|humanoid|monster|findlayer|dead|find|counttype|listexists|list|inlist|timer|timerexists|followers|hue|name|maxweight|diffweight|diffhits|diffstam|diffmana|paralyzed|invul|noto|dead|gumpexists|ingump|targetexists|counttype)\b",
+                    @"\b(queued|position|insysmsg|insysmessage|findtype|findbuff|finddebuff|stam|maxstam|hp|maxhp|maxhits|hits|mana|maxmana|str|dex|int|poisoned|hidden|mounted|rhandempty|lhandempty|skill|count|counter|weight|dead|closest|close|rand|random|next|prev|previous|human|humanoid|monster|findlayer|dead|find|counttype|listexists|list|inlist|atlist|poplist|timer|timerexists|followers|hue|name|maxweight|diffweight|diffhits|diffstam|diffmana|paralyzed|invul|noto|dead|gumpexists|ingump|targetexists|counttype)\b",
                     RegexCompiledOption);
         }
 
