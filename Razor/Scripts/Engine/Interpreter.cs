@@ -1358,16 +1358,18 @@ namespace Assistant.Scripts.Engine
             return _lists[name].Remove(arg);
         }
 
-        public static bool PopList(string name, bool front)
+        public static bool PopList(string name, bool front, out Variable removedVar)
         {
             if (!_lists.ContainsKey(name))
                 throw new RunTimeError("List does not exist");
 
-            var idx = front ? 0 : _lists[name].Count - 1;
+            var list = _lists[name];
+            var idx = front ? 0 : list.Count - 1;
 
-            _lists[name].RemoveAt(idx);
+            removedVar = list[idx];
+            list.RemoveAt(idx);
 
-            return _lists[name].Count > 0;
+            return list.Count > 0;
         }
 
         public static Variable GetListValue(string name, int idx)

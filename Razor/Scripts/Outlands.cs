@@ -1,4 +1,4 @@
-﻿#region license
+#region license
 
 // Razor: An Ultima Online Assistant
 // Copyright (C) 2021 Razor Development Community on GitHub <https://github.com/markdwags/Razor>
@@ -35,7 +35,8 @@ namespace Assistant.Scripts
         public static void Register()
         {
             // Lists
-            Interpreter.RegisterCommandHandler("poplist", PopList);
+            Interpreter.RegisterExpressionHandler("poplist", PopListExp);
+            // Interpreter.RegisterCommandHandler("poplist", PopList);
             Interpreter.RegisterCommandHandler("pushlist", PushList);
             Interpreter.RegisterCommandHandler("removelist", RemoveList);
             Interpreter.RegisterCommandHandler("createlist", CreateList);
@@ -87,6 +88,38 @@ namespace Assistant.Scripts
             // Gump
             Interpreter.RegisterExpressionHandler("gumpexists", GumpExists);
             Interpreter.RegisterExpressionHandler("ingump", InGump);
+        }
+
+        private static uint PopListExp(string command, Variable[] args, bool quiet, bool force)
+        {
+            if (args.Length != 2)
+                throw new RunTimeError("Usage: poplist ('list name') ('element value'/'front'/'back')");
+
+            var listName = args[0].AsString();
+            var frontBackOrElementVar = args[1];
+            var isFrontOrBack = frontBackOrElementVar.AsString() == "front" || frontBackOrElementVar.AsString() == "back";
+
+            if (isFrontOrBack)
+            {
+                var isFront = frontBackOrElementVar.AsString() == "front";
+                if (force)
+                {
+                    while (Interpreter.PopList(listName, isFront, out _)) { }
+                    return Serial.Zero;
+                }
+
+                Interpreter.PopList(listName, isFront, out var popped);
+                return popped.AsSerial();
+            }
+
+            if (force)
+            {
+                while (Interpreter.PopList(listName, frontBackOrElementVar)) { }
+                return Serial.Zero;
+            }
+
+            Interpreter.PopList(listName, frontBackOrElementVar);
+            return frontBackOrElementVar.AsSerial();
         }
 
         private static bool PopList(string command, Variable[] args, bool quiet, bool force)
