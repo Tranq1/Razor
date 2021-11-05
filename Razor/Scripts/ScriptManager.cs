@@ -567,7 +567,7 @@ namespace Assistant.Scripts
                     "setvar", "skill", "sysmsg", "target", "targettype", "targetrelloc", "undress", "useonce", "walk",
                     "wait", "pause", "waitforgump", "waitformenu", "waitforprompt", "waitfortarget", "clearsysmsg", "clearjournal",
                     "waitforsysmsg", "clearhands", "clearall", "virtue", "random",
-                    "warmode", "getlabel", "createlist", "clearlist", "removelist", "pushlist", "poplist", "createtimer", "removetimer", "settimer",
+                    "warmode", "getlabel", "createlist", "clearlist", "atlist", "removelist", "pushlist", "poplist", "createtimer", "removetimer", "settimer",
                     "unsetvar", "ignore", "clearignore", "rename", "setskill", "noto", "ingump", "gumpexists", "dead", "invul", "paralyzed",
                     "counttype", "diffmana", "diffstam", "diffhits", "diffweight", "maxweight", "targetexists", "find", "findlayer", "name",
                     "followers", "hue", "timerexists", "timer",
@@ -899,6 +899,12 @@ namespace Assistant.Scripts
                 "Clear an existing list. The list still exists after this operation.",
                 "clearlist mylist\n");
             descriptionCommands.Add("clearlist", tooltip);
+            
+            tooltip = new ToolTipDescriptions("atlist",
+                new[] { "atlist ('list name') (index (starts with 0))" }, "the serial at the specified index in the list",
+                "Retrieve a list entry at the specified index. Only works if the entry is a serial!",
+                "if atlist mylist 0 as firstListEntry\n\t...\nendif\n");
+            descriptionCommands.Add("atlist", tooltip);
 
             tooltip = new ToolTipDescriptions("removelist",
                 new[] { "removelist ('list name')" }, "N/A",

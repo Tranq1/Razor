@@ -40,6 +40,7 @@ namespace Assistant.Scripts
             Interpreter.RegisterCommandHandler("removelist", RemoveList);
             Interpreter.RegisterCommandHandler("createlist", CreateList);
             Interpreter.RegisterCommandHandler("clearlist", ClearList);
+            Interpreter.RegisterExpressionHandler("atlist", AtList);
 
             // Timers
             Interpreter.RegisterCommandHandler("settimer", SetTimer);
@@ -163,6 +164,16 @@ namespace Assistant.Scripts
             Interpreter.ClearList(args[0].AsString());
 
             return true;
+        }
+        
+        private static uint AtList(string command, Variable[] args, bool quiet, bool force)
+        {
+            if (args.Length != 2)
+                throw new RunTimeError("Usage: atlist ('list name') (index (starts with 0))");
+
+            var value = Interpreter.GetListValue(args[0].AsString(), args[1].AsInt());
+
+            return value?.AsUInt() ?? Serial.Zero;
         }
 
         private static bool SetTimer(string command, Variable[] args, bool quiet, bool force)
