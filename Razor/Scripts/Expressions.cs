@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assistant.Core;
 using Assistant.Scripts.Engine;
 using Assistant.Scripts.Helpers;
@@ -62,6 +63,7 @@ namespace Assistant.Scripts
             Interpreter.RegisterExpressionHandler("insysmessage", InSysMessage);
 
             Interpreter.RegisterExpressionHandler("findtype", FindType);
+            Interpreter.RegisterExpressionHandler("findtypelist", FindTypeList);
 
             Interpreter.RegisterExpressionHandler("findbuff", FindBuffDebuff);
             Interpreter.RegisterExpressionHandler("finddebuff", FindBuffDebuff);
@@ -152,6 +154,51 @@ namespace Assistant.Scripts
 
             return Serial.Zero;
         }
+
+        private static bool FindTypeList(string expression, Variable[] args, bool quiet, bool force)
+        {
+            if (args.Length < 2)
+            {
+                throw new RunTimeError("Usage: findtypelist ('listname') ('name of item') OR ('graphic') [src] [hue] [qty] [range]");
+            }
+
+            var listName = args[0].AsString();
+
+            if (!Interpreter.ListExists(listName))
+                throw new RunTimeError($"List with name '{listName}' does not exist.");
+            
+            string gfxStr = args[1].AsString();
+            Serial gfx = Utility.ToUInt16(gfxStr, 0);
+            List<Item> items;
+            List<Mobile> mobiles;
+
+            (Serial src, int hue, int qty, int range) = CommandHelper.ParseFindArguments(args.Skip(1).ToArray());
+
+            items = gfx == 0
+                ? CommandHelper.GetItemsByName(gfxStr, hue, src, (short) qty, range)
+                : CommandHelper.GetItemsById(Utility.ToUInt16(gfxStr, 0), hue, src, (short) qty, range);
+
+            if (items.Count > 0)
+            {
+                foreach(var listItem in items)
+                    Interpreter.PushList(listName, new Variable(listItem.Serial.ToString()), false, true);
+                return true;
+            }
+
+            mobiles = gfx == 0
+                ? CommandHelper.GetMobilesByName(gfxStr, range)
+                : CommandHelper.GetMobilesById(Utility.ToUInt16(gfxStr, 0), range);
+
+            if (mobiles.Count > 0)
+            {
+                foreach (var listItem in mobiles)
+                    Interpreter.PushList(listName, new Variable(listItem.Serial.ToString()), false, true);
+                return true;
+            }
+
+            return false;
+        }
+
 
         private static bool Mounted(string expression, Variable[] args, bool quiet, bool force)
         {
