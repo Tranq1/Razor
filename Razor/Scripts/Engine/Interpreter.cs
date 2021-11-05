@@ -1,4 +1,4 @@
-﻿#region license
+#region license
 
 // Razor: An Ultima Online Assistant
 // Copyright (C) 2021 Razor Development Community on GitHub <https://github.com/markdwags/Razor>
@@ -485,10 +485,23 @@ namespace Assistant.Scripts.Engine
                     break;
                 case ASTNodeType.WHILE:
                     {
+                        // The iterator variable's name is the hash code of the for loop's ASTNode.
+                        var iterName = node.GetHashCode().ToString();
+
                         // When we first enter the loop, push a new scope
                         if (Interpreter.CurrentScope.StartNode != node)
                         {
                             Interpreter.PushScope(node);
+                            Interpreter.SetVariable(iterName, "0");
+                            Interpreter.SetVariable("index", "0");
+                        }
+                        else
+                        {
+                            // Increment the iterator argument
+                            var arg = Interpreter.GetVariable(iterName);
+                            var index = arg.AsUInt() + 1;
+                            Interpreter.SetVariable(iterName, index.ToString());
+                            Interpreter.SetVariable("index", index.ToString());
                         }
 
                         var expr = node.FirstChild();
@@ -576,12 +589,15 @@ namespace Assistant.Scripts.Engine
 
                             // Create a dummy argument that acts as our loop variable
                             Interpreter.SetVariable(iterName, "0");
+                            Interpreter.SetVariable("index", "0");
                         }
                         else
                         {
                             // Increment the iterator argument
                             var arg = Interpreter.GetVariable(iterName);
-                            Interpreter.SetVariable(iterName, (arg.AsUInt() + 1).ToString());
+                            var index = arg.AsUInt() + 1;
+                            Interpreter.SetVariable(iterName, index.ToString());
+                            Interpreter.SetVariable("index", index.ToString());
                         }
 
                         // Check loop condition
@@ -645,6 +661,7 @@ namespace Assistant.Scripts.Engine
 
                             // Create a dummy argument that acts as our iterator object
                             Interpreter.SetVariable(iterName, "0");
+                            Interpreter.SetVariable("index", "0");
 
                             // Make the user-chosen variable have the value for the front of the list
                             var arg = Interpreter.GetListValue(listName, 0);
@@ -659,6 +676,7 @@ namespace Assistant.Scripts.Engine
                             // Increment the iterator argument
                             var idx = Interpreter.GetVariable(iterName).AsInt() + 1;
                             Interpreter.SetVariable(iterName, idx.ToString());
+                            Interpreter.SetVariable("index", idx.ToString());
 
                             // Update the user-chosen variable
                             var arg = Interpreter.GetListValue(listName, idx);
