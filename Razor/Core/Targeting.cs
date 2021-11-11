@@ -858,6 +858,7 @@ namespace Assistant
 
         public static void Target(TargetInfo info)
         {
+            var wasIntercept = m_Intercept;
             if (m_Intercept)
             {
                 OneTimeResponse(info);
@@ -869,9 +870,27 @@ namespace Assistant
                 Client.Instance.SendToServer(new TargetResponse(info));
             }
 
-            CancelClientTarget();
-            m_HasTarget = false;
-            m_FromGrabHotKey = false;
+            // When the targeting is done from an intercepted target (i.e. a hotkey) and called by a script
+            // (thus calling this method and not TargetResponse), also check if previous "natural" target existed
+            // and resend it if that's the case. Otherwise cancel target.
+            if (wasIntercept && m_PreviousID != 0)
+            {
+                m_CurrentID = m_PreviousID;
+                m_AllowGround = m_PreviousGround;
+                m_CurFlags = m_PrevFlags;
+                m_HasTarget = false;
+                m_FromGrabHotKey = false;
+
+                m_PreviousID = 0;
+
+                ResendTarget();
+            }
+            else
+            {
+                CancelClientTarget();
+                m_HasTarget = false;
+                m_FromGrabHotKey = false;
+            }
         }
 
         public static void Target(Point3D pt)
