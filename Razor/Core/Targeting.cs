@@ -673,8 +673,20 @@ namespace Assistant
 
             if (m_HasTarget)
             {
+                var wasIntercept = m_Intercept;
                 if (!DoLastTarget())
                     ResendTarget();
+                // in case we call the last target hotkey and the target was intercepted, regenerate the previous target
+                else if (wasIntercept && m_PreviousID != 0)
+                {
+                    m_CurrentID = m_PreviousID;
+                    m_AllowGround = m_PreviousGround;
+                    m_CurFlags = m_PrevFlags;
+
+                    m_PreviousID = 0;
+
+                    Client.Instance.SendToClient(new Target(m_CurrentID, m_AllowGround, m_CurFlags));
+                }
             }
             else if (forceQ || Config.GetBool("QueueTargets"))
             {
@@ -784,8 +796,12 @@ namespace Assistant
             if (CheckHealPoisonTarg(m_CurrentID, targ.Serial))
                 return false;
 
-            CancelClientTarget();
-            m_HasTarget = false;
+            // only cancel when there is no intercept happening or no previous target we need to regenerate
+            if (!m_Intercept || m_PreviousID == 0)
+            {
+                m_HasTarget = false;
+                CancelClientTarget();
+            }
 
             targ.TargID = m_CurrentID;
 
