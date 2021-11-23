@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Assistant.Scripts.Engine;
 
 namespace Assistant.Scripts.Helpers
@@ -1015,6 +1016,18 @@ namespace Assistant.Scripts.Helpers
                         throw new RunTimeError($"Unknown target type: '{args[1].AsString()}'");
                 }
             }
+        }
+
+        public static string ReplaceStringInterpolations(string stringWithPossibleInterpolation)
+        {
+            var regex = new Regex(@"\{{(.*?)\}}");
+            return regex.Replace(stringWithPossibleInterpolation, match =>
+            {
+                var varName = match.Groups[1].Value;
+                var varContent = Interpreter.GetVariable(varName);
+
+                return varContent?.AsString() ?? "<not found>";
+            });
         }
     }
 }

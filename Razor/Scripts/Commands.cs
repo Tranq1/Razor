@@ -879,9 +879,12 @@ namespace Assistant.Scripts
                 throw new RunTimeError("Usage: overhead ('text') [color] [serial]");
             }
 
+            var overheadMessage = args[0].AsString();
+            overheadMessage = CommandHelper.ReplaceStringInterpolations(overheadMessage);
+            
             if (args.Length == 1)
             {
-                World.Player.OverheadMessage(Config.GetInt("SysColor"), args[0].AsString());
+                World.Player.OverheadMessage(Config.GetInt("SysColor"), overheadMessage);
             }
             else
             {
@@ -891,11 +894,11 @@ namespace Assistant.Scripts
                 {
                     uint serial = args[2].AsSerial();
                     Mobile m = World.FindMobile(serial);
-                    m?.OverheadMessage(hue, args[0].AsString());
+                    m?.OverheadMessage(hue, overheadMessage);
                 }
                 else
                 {
-                    World.Player.OverheadMessage(hue, args[0].AsString());
+                    World.Player.OverheadMessage(hue, overheadMessage);
                 }
             }
 
@@ -909,13 +912,16 @@ namespace Assistant.Scripts
                 throw new RunTimeError("Usage: sysmsg ('text') [color]");
             }
 
+            var sysMessage = args[0].AsString();
+            sysMessage = CommandHelper.ReplaceStringInterpolations(sysMessage);
+
             if (args.Length == 1)
             {
-                World.Player.SendMessage(Config.GetInt("SysColor"), args[0].AsString());
+                World.Player.SendMessage(Config.GetInt("SysColor"), sysMessage);
             }
             else if (args.Length == 2)
             {
-                World.Player.SendMessage(Utility.ToInt32(args[1].AsString(), 0), args[0].AsString());
+                World.Player.SendMessage(Utility.ToInt32(args[1].AsString(), 0), sysMessage);
             }
 
             return true;
