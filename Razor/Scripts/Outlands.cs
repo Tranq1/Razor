@@ -609,10 +609,21 @@ namespace Assistant.Scripts
         private static bool AddIgnore(string commands, Variable[] args, bool quiet, bool force)
         {
             if (args.Length != 1)
-                throw new RunTimeError("Usage: ignore (serial)");
-            var serial = args[0].AsSerial();
-            Interpreter.AddIgnore(serial);
-            CommandHelper.SendMessage($"Added {serial} to ignore list", quiet);
+                throw new RunTimeError("Usage: ignore (serial or list)");
+            var toIgnore = args[0];
+            var ignoreListName = toIgnore.AsString();
+            if (Interpreter.ListExists(ignoreListName))
+            {
+                var list = Interpreter.GetList(ignoreListName).Select(v => (Serial)v.AsSerial()).ToList();
+                Interpreter.AddIgnoreRange(list);
+                CommandHelper.SendMessage($"Added {list.Count} entries to ignore list", quiet);
+            }
+            else
+            {
+                var serial = toIgnore.AsSerial();
+                Interpreter.AddIgnore(serial);
+                CommandHelper.SendMessage($"Added {serial} to ignore list", quiet);
+            }
             return true;
         }
 

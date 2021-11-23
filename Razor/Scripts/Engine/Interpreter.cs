@@ -143,6 +143,11 @@ namespace Assistant.Scripts.Engine
             _ignoreList.Add(serial);
         }
 
+        public void AddIgnoreRange(List<Serial> serials)
+        {
+            serials.ForEach(AddIgnore);
+        }
+
         public void ClearIgnore()
         {
             _ignoreList.Clear();
@@ -1228,6 +1233,12 @@ namespace Assistant.Scripts.Engine
             scope.AddIgnore(serial);
         }
 
+        public static void AddIgnoreRange(List<Serial> serials, bool global = true)
+        {
+            Scope scope = global ? _scope : _currentScope;
+            scope.AddIgnoreRange(serials);
+        }
+
         public static void ClearIgnore(bool global = true)
         {
             Scope scope = global ? _scope : _currentScope;
@@ -1318,6 +1329,11 @@ namespace Assistant.Scripts.Engine
         public static bool ListExists(string name)
         {
             return _lists.ContainsKey(name);
+        }
+
+        public static List<Variable> GetList(string name)
+        {
+            return _lists.ContainsKey(name) ? _lists[name] : null;
         }
 
         public static bool ListContains(string name, Variable arg)
