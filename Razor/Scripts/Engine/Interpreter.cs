@@ -147,6 +147,17 @@ namespace Assistant.Scripts.Engine
         {
             serials.ForEach(AddIgnore);
         }
+        
+        public void RemoveIgnore(Serial serial)
+        {
+            if(_ignoreList.Contains(serial))
+                _ignoreList.Remove(serial);
+        }
+
+        public void RemoveIgnoreRange(List<Serial> serials)
+        {
+            _ignoreList.RemoveWhere(serials.Contains);
+        }
 
         public void ClearIgnore()
         {
@@ -1237,6 +1248,18 @@ namespace Assistant.Scripts.Engine
         {
             Scope scope = global ? _scope : _currentScope;
             scope.AddIgnoreRange(serials);
+        }
+        
+        public static void RemoveIgnore(Serial serial, bool global = true)
+        {
+            Scope scope = global ? _scope : _currentScope;
+            scope.RemoveIgnore(serial);
+        }
+
+        public static void RemoveIgnoreRange(List<Serial> serials, bool global = true)
+        {
+            Scope scope = global ? _scope : _currentScope;
+            scope.RemoveIgnoreRange(serials);
         }
 
         public static void ClearIgnore(bool global = true)

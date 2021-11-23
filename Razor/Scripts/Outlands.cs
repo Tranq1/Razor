@@ -58,6 +58,7 @@ namespace Assistant.Scripts
             Interpreter.RegisterExpressionHandler("varexist", VarExist);
 
             Interpreter.RegisterCommandHandler("ignore", AddIgnore);
+            Interpreter.RegisterCommandHandler("unignore", RemoveIgnore);
             Interpreter.RegisterCommandHandler("clearignore", ClearIgnore);
 
             Interpreter.RegisterExpressionHandler("timer", TimerValue);
@@ -623,6 +624,27 @@ namespace Assistant.Scripts
                 var serial = toIgnore.AsSerial();
                 Interpreter.AddIgnore(serial);
                 CommandHelper.SendMessage($"Added {serial} to ignore list", quiet);
+            }
+            return true;
+        }
+
+        private static bool RemoveIgnore(string commands, Variable[] args, bool quiet, bool force)
+        {
+            if (args.Length != 1)
+                throw new RunTimeError("Usage: unignore (serial or list)");
+            var toIgnore = args[0];
+            var ignoreListName = toIgnore.AsString();
+            if (Interpreter.ListExists(ignoreListName))
+            {
+                var list = Interpreter.GetList(ignoreListName).Select(v => (Serial)v.AsSerial()).ToList();
+                Interpreter.RemoveIgnoreRange(list);
+                CommandHelper.SendMessage($"Removed {list.Count} entries from ignore list", quiet);
+            }
+            else
+            {
+                var serial = toIgnore.AsSerial();
+                Interpreter.RemoveIgnore(serial);
+                CommandHelper.SendMessage($"Removed {serial} from ignore list", quiet);
             }
             return true;
         }
