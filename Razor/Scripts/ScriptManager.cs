@@ -568,7 +568,7 @@ namespace Assistant.Scripts
                     "wait", "pause", "waitforgump", "waitformenu", "waitforprompt", "waitfortarget", "clearsysmsg", "clearjournal",
                     "waitforsysmsg", "clearhands", "clearall", "virtue", "random",
                     "warmode", "getlabel", "createlist", "clearlist", "removelist", "pushlist", "poplist", "createtimer", "removetimer", "settimer",
-                    "unsetvar", "ignore", "clearignore", "rename", "setskill", "noto", "ingump", "gumpexists", "dead", "invul", "paralyzed",
+                    "unsetvar", "ignore", "unignore", "clearignore", "rename", "setskill", "noto", "ingump", "gumpexists", "dead", "invul", "paralyzed",
                     "counttype", "diffmana", "diffstam", "diffhits", "diffweight", "maxweight", "targetexists", "find", "findlayer", "name",
                     "followers", "hue", "timerexists", "timer",
                 };
@@ -1069,10 +1069,16 @@ namespace Assistant.Scripts
             descriptionCommands.Add("clearignore", tooltip);
 
             tooltip = new ToolTipDescriptions("ignore",
-                new[] { "ignore (serial)" }, "N/A",
+                new[] { "ignore (serial or list)" }, "N/A",
                 "Add mobile or item serial to ignore list",
                 "if targettype 'an eagle' as mob\n\tskill 'Animal Lore'\n\twft\n\ttarget mob\n\tignore mob\nendif\n");
             descriptionCommands.Add("ignore", tooltip);
+            
+            tooltip = new ToolTipDescriptions("unignore",
+                new[] { "unignore (serial or list)" }, "N/A",
+                "Remove mobile or item serial from ignore list",
+                "createlist mylist\nif targettype 'an eagle' as mob\n\tskill 'Animal Lore'\n\twft\n\ttarget mob\n\tignore mob\n\tpushlist mylist mob\nendif\nunignore mylist\n");
+            descriptionCommands.Add("unignore", tooltip);
 
             tooltip = new ToolTipDescriptions("setskill",
                 new[] { "setskill (skill_name) (up/donw/lock)" }, "N/A",
