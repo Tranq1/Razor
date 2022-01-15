@@ -202,6 +202,7 @@ namespace Assistant.Scripts
 
         private static GetLabelState _getLabelState = GetLabelState.NONE;
         private static Action<Packet, PacketHandlerEventArgs, Serial, ushort, MessageType, ushort, ushort, string, string, string> _onLabelMessage;
+        private static Action _onStop;
 
         private static bool GetLabel(string command, Variable[] args, bool quiet, bool force)
         {
@@ -219,6 +220,7 @@ namespace Assistant.Scripts
                     {
                         _onLabelMessage = null;
                         MessageManager.OnLabelMessage -= _onLabelMessage;
+                        Interpreter.OnStop -= _onStop;
                         _getLabelState = GetLabelState.NONE;
                         MessageManager.GetLabelCommand = false;
                         return true;
@@ -234,6 +236,19 @@ namespace Assistant.Scripts
                     // so we want to invoke that _onLabelMessage in both cases with delays
                     MessageManager.GetLabelCommand = true;
 
+                    // Reset the state when script is stopped to prevent state inconsistencies
+                    _onStop = () =>
+                    {
+                        if (_onLabelMessage != null)
+                        {
+                            MessageManager.OnLabelMessage -= _onLabelMessage;
+                            _onLabelMessage = null;
+                        }
+                        _getLabelState = GetLabelState.NONE;
+                        Interpreter.OnStop -= _onStop;
+                        MessageManager.GetLabelCommand = false;
+                    };
+                    
                     _onLabelMessage = (p, a, source, graphic, type, hue, font, lang, sourceName, text) =>
                     {
                         if (source != serial)
@@ -253,13 +268,16 @@ namespace Assistant.Scripts
                         Interpreter.SetVariable(name, label.ToString());
                     };
 
+                    Interpreter.OnStop += _onStop;
                     MessageManager.OnLabelMessage += _onLabelMessage;
                     break;
                 case GetLabelState.WAITING_FOR_FIRST_LABEL:
                     break;
                 case GetLabelState.WAITING_FOR_REMAINING_LABELS:
                     // We get here after the pause has expired.
+                    Interpreter.OnStop -= _onStop;
                     MessageManager.OnLabelMessage -= _onLabelMessage;
+                    
                     _onLabelMessage = null;
                     _getLabelState = GetLabelState.NONE;
                     MessageManager.GetLabelCommand = false;

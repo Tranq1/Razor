@@ -1108,6 +1108,8 @@ namespace Assistant.Scripts.Engine
 
     public static class Interpreter
     {
+        public static Action OnStop;
+
         // The "global" scope
         private readonly static Scope _scope = new Scope(null, null);
 
@@ -1435,6 +1437,7 @@ namespace Assistant.Scripts.Engine
             _activeScript = null;
             _currentScope = _scope;
             _executionState = ExecutionState.RUNNING;
+            OnStop?.Invoke();
         }
 
         public static bool ExecuteScript()
