@@ -2664,76 +2664,71 @@ namespace Assistant
             Serial ser = p.ReadUInt32();
             ushort icon = p.ReadUInt16();
             ushort action = p.ReadUInt16();
-
-            if (Enum.IsDefined(typeof(BuffIcon), icon))
+            
+            string format = Config.GetString("BuffDebuffFormat");
+            if (string.IsNullOrEmpty(format))
             {
-                BuffIcon buff = (BuffIcon) icon;
-
-                string format = Config.GetString("BuffDebuffFormat");
-                if (string.IsNullOrEmpty(format))
-                {
-                    format = "[{action}{name}]";
-                }
-
-                switch (action)
-                {
-                    case 0x01: // show
-
-                        p.ReadUInt32(); //0x000
-                        p.ReadUInt16(); //icon # again..?
-                        p.ReadUInt16(); //0x1 = show
-                        p.ReadUInt32(); //0x000
-                        ushort duration = p.ReadUInt16();
-                        p.ReadUInt16(); //0x0000
-                        p.ReadByte(); //0x0
-
-                        BuffsDebuffs buffInfo = new BuffsDebuffs
-                        {
-                            IconNumber = icon,
-                            BuffIcon = (BuffIcon) icon,
-                            ClilocMessage1 = Language.GetCliloc((int) p.ReadUInt32()),
-                            ClilocMessage2 = Language.GetCliloc((int) p.ReadUInt32()),
-                            Duration = duration,
-                            Timestamp = DateTime.UtcNow
-                        };
-
-                        if (World.Player != null && World.Player.BuffsDebuffs.All(b => b.BuffIcon != buff))
-                        {
-                            World.Player.BuffsDebuffs.Add(buffInfo);
-
-                            if (Config.GetBool("ShowBuffDebuffOverhead") &&
-                                !BuffsTimer.IsFiltered(buffInfo.ClilocMessage1))
-                            {
-                                World.Player.OverheadMessage(Config.GetInt("BuffHue"),
-                                    format.Replace("{action}", "+").Replace("{name}", buffInfo.ClilocMessage1)
-                                        .Replace("{duration}", buffInfo.Duration.ToString()));
-                            }
-                        }
-
-                        break;
-
-                    case 0x0: // remove
-                        if (World.Player != null)
-                        {
-                            if (Config.GetBool("ShowBuffDebuffOverhead"))
-                            {
-                                string buffRemoveInfo = World.Player.BuffsDebuffs.Where(b => b.BuffIcon == buff)
-                                    .Select(x => x.ClilocMessage1).FirstOrDefault();
-
-                                if (!BuffsTimer.IsFiltered(buffRemoveInfo))
-                                    World.Player.OverheadMessage(Config.GetInt("DebuffHue"),
-                                        format.Replace("{action}", "-").Replace("{name}", buffRemoveInfo)
-                                            .Replace("{duration}", string.Empty));
-                            }
-
-                            World.Player.BuffsDebuffs.RemoveAll(b => b.BuffIcon == buff);
-                        }
-
-                        break;
-                }
-
-                Client.Instance.RequestTitlebarUpdate();
+                format = "[{action}{name}]";
             }
+
+            switch (action)
+            {
+                case 0x01: // show
+
+                    p.ReadUInt32(); //0x000
+                    p.ReadUInt16(); //icon # again..?
+                    p.ReadUInt16(); //0x1 = show
+                    p.ReadUInt32(); //0x000
+                    ushort duration = p.ReadUInt16();
+                    p.ReadUInt16(); //0x0000
+                    p.ReadByte(); //0x0
+
+                    BuffsDebuffs buffInfo = new BuffsDebuffs
+                    {
+                        IconNumber = icon,
+                        BuffIcon = icon,
+                        ClilocMessage1 = Language.GetCliloc((int) p.ReadUInt32()),
+                        ClilocMessage2 = Language.GetCliloc((int) p.ReadUInt32()),
+                        Duration = duration,
+                        Timestamp = DateTime.UtcNow
+                    };
+
+                    if (World.Player != null && World.Player.BuffsDebuffs.All(b => b.BuffIcon != icon))
+                    {
+                        World.Player.BuffsDebuffs.Add(buffInfo);
+
+                        if (Config.GetBool("ShowBuffDebuffOverhead") &&
+                            !BuffsTimer.IsFiltered(buffInfo.ClilocMessage1))
+                        {
+                            World.Player.OverheadMessage(Config.GetInt("BuffHue"),
+                                format.Replace("{action}", "+").Replace("{name}", buffInfo.ClilocMessage1)
+                                    .Replace("{duration}", buffInfo.Duration.ToString()));
+                        }
+                    }
+
+                    break;
+
+                case 0x0: // remove
+                    if (World.Player != null)
+                    {
+                        if (Config.GetBool("ShowBuffDebuffOverhead"))
+                        {
+                            string buffRemoveInfo = World.Player.BuffsDebuffs.Where(b => b.BuffIcon == icon)
+                                .Select(x => x.ClilocMessage1).FirstOrDefault();
+
+                            if (!BuffsTimer.IsFiltered(buffRemoveInfo))
+                                World.Player.OverheadMessage(Config.GetInt("DebuffHue"),
+                                    format.Replace("{action}", "-").Replace("{name}", buffRemoveInfo)
+                                        .Replace("{duration}", string.Empty));
+                        }
+
+                        World.Player.BuffsDebuffs.RemoveAll(b => b.BuffIcon == icon);
+                    }
+
+                    break;
+            }
+
+            Client.Instance.RequestTitlebarUpdate();
 
             if (World.Player != null && World.Player.BuffsDebuffs.Count > 0)
             {

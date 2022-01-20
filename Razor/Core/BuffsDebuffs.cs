@@ -1,4 +1,4 @@
-﻿#region license
+#region license
 
 // Razor: An Ultima Online Assistant
 // Copyright (C) 2021 Razor Development Community on GitHub <https://github.com/markdwags/Razor>
@@ -156,7 +156,7 @@ namespace Assistant.Core
         public int Duration { get; set; }
         public string ClilocMessage1 { get; set; }
         public string ClilocMessage2 { get; set; }
-        public BuffIcon BuffIcon { get; set; }
+        public int BuffIcon { get; set; }
         public DateTime Timestamp { get; set; }
     }
 }
